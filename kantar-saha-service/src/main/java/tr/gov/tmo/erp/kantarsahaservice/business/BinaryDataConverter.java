@@ -59,7 +59,7 @@ public class BinaryDataConverter {
                 if (parts.length > 0) {
                     try {
                         String lastPart = parts[parts.length - 1].trim();
-                        if (!lastPart.isEmpty()) { // Boşluk kontrolü
+                        if (!lastPart.isEmpty()) {
                             gelenTartih.add(Integer.parseInt(lastPart));
                         }
                     } catch (NumberFormatException ignored) {
@@ -68,8 +68,6 @@ public class BinaryDataConverter {
                 i = end;
             }
         }
-
-
 
         //Hangi değerden fazla tartım bilgisi geldi ise onu yazıyoruz
         return gelenTartih.stream()
