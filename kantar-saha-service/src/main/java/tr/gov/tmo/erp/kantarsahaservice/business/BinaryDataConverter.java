@@ -2,6 +2,7 @@ package tr.gov.tmo.erp.kantarsahaservice.business;
 
 import tr.gov.tmo.erp.kantarsahaservice.model.KantarConfig;
 import tr.gov.tmo.erp.kantarsahaservice.model.KantarPattern;
+import tr.gov.tmo.erp.kantarsahaservice.model.PortScanResult;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -17,41 +18,33 @@ public class BinaryDataConverter {
 
         String text = new String(data, StandardCharsets.US_ASCII);
 
-        // Durukan, Esit, Şahin, Sentez, Taralsa bu formata girer
-        List<Integer> genel = new ArrayList<>();
-        Matcher m1 = KantarPattern.GENERIC_AT.getPattern().matcher(text);
-        while (m1.find()) genel.add(Integer.parseInt(m1.group(1).trim()));
-        if (!genel.isEmpty()) return result(genel,KantarPattern.GENERIC_AT.getPattern());
-
-        // Tunaylar
-        List<Integer> tunaylarGenel = new ArrayList<>();
-        Matcher m3 = KantarPattern.TUNAYLAR_STD.getPattern().matcher(text);
-        while (m3.find()) tunaylarGenel.add(Integer.parseInt(m3.group(1).trim()));
-        if (!tunaylarGenel.isEmpty()) return result(tunaylarGenel,KantarPattern.TUNAYLAR_STD.getPattern());
-
-        //  Weiolo
-        List<Integer> weilo = new ArrayList<>();
-        Matcher m2 = KantarPattern.WEIOLO.getPattern().matcher(text);
-        while (m2.find()) weilo.add(Integer.parseInt(m2.group(1).trim()));
-        if (!weilo.isEmpty()) return result(weilo,KantarPattern.WEIOLO.getPattern());
-
-        // Tunaylar Genişletilmiş Format için Regex
-        List<Integer> tunaylarExt = new ArrayList<>();
-        Matcher m4 = KantarPattern.TUNAYLAR_EXT.getPattern().matcher(text);
-        while (m4.find()) tunaylarExt.add(Integer.parseInt(m1.group(1).trim()));
-        if (!tunaylarExt.isEmpty()) return result(tunaylarExt,KantarPattern.TUNAYLAR_EXT.getPattern());
-
-        //PHILIPS
-        List<Integer> philips = new ArrayList<>();
-        Matcher m5 = KantarPattern.PHILIPS.getPattern().matcher(text);
-        while (m5.find()) philips.add(Integer.parseInt(m5.group(1).trim()));
-        if (!philips.isEmpty()) return result(philips,KantarPattern.PHILIPS.getPattern());
-
-        return null;
+        List<KantarPattern> kantarPatterns =List.of(
+                KantarPattern.GENERIC_AT,
+                KantarPattern.TUNAYLAR_STD,
+                KantarPattern.PHILIPS,
+                KantarPattern.WEIOLO,
+                KantarPattern.TUNAYLAR_EXT
+        );
+        KantarConfig config =null;
+        for (KantarPattern kantarPattern : kantarPatterns) {
+            config = getKantarConfig(text, kantarPattern);
+            if (config != null)
+                break;
+        }
+    return  config;
     }
 
 
-    private static KantarConfig result(List<Integer> gelenTartiList , Pattern kantarPattern) {
+
+    private static KantarConfig getKantarConfig(String parametre,KantarPattern patternModel){
+        List<Integer> genel = new ArrayList<>();
+        Matcher m1 = patternModel.getPattern().matcher(parametre);
+        while (m1.find()) genel.add(Integer.parseInt(m1.group(1).trim()));
+        if (!genel.isEmpty()) return result(genel,patternModel.name());
+        return null;
+    }
+
+    private static KantarConfig result(List<Integer> gelenTartiList , String patternModel ) {
         Integer covertTartim = gelenTartiList.stream()
                 .collect(Collectors.groupingBy(i -> i, Collectors.counting()))
                 .entrySet()
@@ -60,7 +53,7 @@ public class BinaryDataConverter {
                 .map(Map.Entry::getKey)
                 .orElse(-1);
 
-        return new KantarConfig(kantarPattern, covertTartim);
+        return new KantarConfig(patternModel,covertTartim);
     }
 
 
@@ -112,3 +105,41 @@ public class BinaryDataConverter {
                 i = end;
             }
         }*/
+// Tunaylar
+
+//  Weiolo
+
+//PHILIPS
+
+// Tunaylar Genişletilmiş Format için Regex
+        /*// Durukan, Esit, Şahin, Sentez, Taralsa bu formata girer
+        List<Integer> genel = new ArrayList<>();
+        Matcher m1 = KantarPattern.GENERIC_AT.getPattern().matcher(text);
+        while (m1.find()) genel.add(Integer.parseInt(m1.group(1).trim()));
+        if (!genel.isEmpty()) return result(genel,KantarPattern.GENERIC_AT.name());
+
+        // Tunaylar
+        List<Integer> tunaylarGenel = new ArrayList<>();
+        Matcher m3 = KantarPattern.TUNAYLAR_STD.getPattern().matcher(text);
+        while (m3.find()) tunaylarGenel.add(Integer.parseInt(m3.group(1).trim()));
+        if (!tunaylarGenel.isEmpty()) return result(tunaylarGenel,KantarPattern.TUNAYLAR_STD.name());
+
+        //  Weiolo
+        List<Integer> weilo = new ArrayList<>();
+        Matcher m2 = KantarPattern.WEIOLO.getPattern().matcher(text);
+        while (m2.find()) weilo.add(Integer.parseInt(m2.group(1).trim()));
+        if (!weilo.isEmpty()) return result(weilo,KantarPattern.WEIOLO.name());
+
+        // Tunaylar Genişletilmiş Format için Regex
+        List<Integer> tunaylarExt = new ArrayList<>();
+        Matcher m4 = KantarPattern.TUNAYLAR_EXT.getPattern().matcher(text);
+        while (m4.find()) tunaylarExt.add(Integer.parseInt(m1.group(1).trim()));
+        if (!tunaylarExt.isEmpty()) return result(tunaylarExt,KantarPattern.TUNAYLAR_EXT.name());
+
+        //PHILIPS
+        List<Integer> philips = new ArrayList<>();
+        Matcher m5 = KantarPattern.PHILIPS.getPattern().matcher(text);
+        while (m5.find()) philips.add(Integer.parseInt(m5.group(1).trim()));
+        if (!philips.isEmpty()) return result(philips, KantarPattern.PHILIPS.name());
+
+        return null;*/

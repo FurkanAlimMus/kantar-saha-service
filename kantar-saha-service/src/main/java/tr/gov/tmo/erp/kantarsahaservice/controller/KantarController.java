@@ -21,7 +21,10 @@ public class KantarController {
     @PostMapping
     public Boolean test(@RequestBody KantarTestRequest body) {
         return kantarService.check(body);
+    }
 
+    public int kantarOku(){
+        return kantarService.kantarOku();
     }
 
     @GetMapping("ports")

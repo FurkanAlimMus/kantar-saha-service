@@ -6,7 +6,6 @@ import tr.gov.tmo.erp.kantarsahaservice.model.PortScanResult;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Objects;
 
 public class PortScanner {
@@ -19,6 +18,8 @@ public class PortScanner {
     private static final int STOP_BIT = SerialPort.ONE_STOP_BIT;
     private static final int DATA_BIT = 8;
     private static final int FLOW_CONTROL = SerialPort.FLOW_CONTROL_DISABLED;
+
+    public static PortScanResult lastResoultKantar;
 
     static byte[] readFrame(SerialPort port) throws Exception {
 
@@ -47,6 +48,8 @@ public class PortScanner {
 
     public static PortScanResult scannerPort(String port, Integer kilo) {
 
+
+
         for (int baudRate : BAUD_RATES) {
             for (byte[] command : COMMANDS) {
 
@@ -72,7 +75,8 @@ public class PortScanner {
 
 
                     if (convert == kilo) {
-                        return new PortScanResult(baudRate, command, DATA_BIT, STOP_BIT, PARITY, FLOW_CONTROL,result.kantarPattern());
+                        lastResoultKantar= new PortScanResult(port,baudRate, command, result.patternModel());
+                        return lastResoultKantar;
 
                     }
 

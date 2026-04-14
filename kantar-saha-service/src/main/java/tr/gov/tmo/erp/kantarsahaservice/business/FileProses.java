@@ -1,16 +1,63 @@
 package tr.gov.tmo.erp.kantarsahaservice.business;
 
+import tr.gov.tmo.erp.kantarsahaservice.model.KantarInfoEnum;
 import tr.gov.tmo.erp.kantarsahaservice.model.KantarTestRequest;
 import tr.gov.tmo.erp.kantarsahaservice.model.PortScanResult;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FileProses {
 
-    void  readKantarInfo(){
+    private static final String dirPath = "C:\\bbys-kantar-info";
+    private static final String prefix = "kantar-info";
+
+    public static PortScanResult readKantarInfo() {
+
+
+        if (PortScanner.lastResoultKantar != null) {
+            return PortScanner.lastResoultKantar;
+        } else {
+            Map<String, String> infoData = new HashMap<>();
+            try {
+                BufferedReader bufferedReader = Files.newBufferedReader(Path.of(dirPath + "\\" + prefix));
+                String line;
+                if (Files.exists(Path.of(dirPath + "\\" + prefix)) && Files.size(Path.of(dirPath + "\\" + prefix)) == 0) {
+                    System.out.println("Dosya tamamen boş!");
+                } else {
+                    while ((line = bufferedReader.readLine()) != null) {
+                        String[] lineArray = line.split(":");
+                        if (lineArray.length == 2) {
+                            String key = lineArray[0].trim();
+                            String value = lineArray[1].trim();
+                            infoData.put(key, value);
+                        }
+                    }
+                    if (!infoData.isEmpty()) {
+                        PortScanner.lastResoultKantar = new PortScanResult(
+                                infoData.get(KantarInfoEnum.PORT.name()),
+                                Integer.getInteger(infoData.get(KantarInfoEnum.BAUND_RATE.name())),
+                                infoData.get(KantarInfoEnum.COMMAND.name()).getBytes(StandardCharsets.UTF_8),
+                                infoData.get(KantarInfoEnum.PATTERN_MODEL.name())
+                        );
+                    }
+
+
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+
+            }
+
+
+        }
+
+
+        return null;
 
     }
 
@@ -21,33 +68,21 @@ public class FileProses {
 
             if (result == null) return false;
 
-            try (BufferedWriter writer = createBufferedWriter("C:\\bbys-kantar-info", "kantar-info")) {
+            try (BufferedWriter writer = createBufferedWriter(dirPath, prefix)) {
 
-                writer.write("TARİH      : " + java.time.LocalDateTime.now());
+
+                writer.write(KantarInfoEnum.PORT.name() + ":" + result.port());
                 writer.newLine();
-                writer.write("PORT       : " + body.port());
-                writer.newLine();
-                writer.write("KILO       : " + body.kilo());
-                writer.newLine();
-                writer.write("BAUD RATE  : " + result.baudRate());
-                writer.newLine();
-                writer.write("DATA BITS  : " + result.dataBit());
-                writer.newLine();
-                writer.write("STOP BITS  : " + result.stopBit());
+                writer.write(KantarInfoEnum.PATTERN_MODEL.name() + ":" + result.patternModel());
                 writer.newLine();
 
-                // Parity bilgisini daha okunur yazalım (Örn: 0 ise None)
-                writer.write("PARITY     : " + result.parity());
+                writer.write(KantarInfoEnum.BAUND_RATE.name() + ":" + result.baudRate());
                 writer.newLine();
-
-                writer.write("FLOW CTRL  : " + result.flow());
-                writer.newLine();
-
                 // Command (byte[]) bilgisini HEX formatına çevirerek yazıyoruz
-                writer.write("COMMAND    : " + bytesToHex(result.command()));
+                writer.write(KantarInfoEnum.COMMAND.name() + ":" + bytesToHex(result.command()));
                 writer.newLine();
+                writer.write(KantarInfoEnum.TARIH.name() + ":" + java.time.LocalDateTime.now());
 
-                writer.write("PATTERN    : " + result.pattern().pattern());
 
                 writer.flush();
             }
@@ -70,16 +105,14 @@ public class FileProses {
     }
 
 
-
     static BufferedWriter createBufferedWriter(String dirPath, String prefix) throws IOException {
         File dir = new File(dirPath);
         if (!dir.exists()) {
             dir.mkdirs();
         }
 
-
         String fileName = dirPath + File.separator
-                + prefix +  ".txt";
+                + prefix + ".txt";
 
         return new BufferedWriter(new FileWriter(fileName, false));
     }

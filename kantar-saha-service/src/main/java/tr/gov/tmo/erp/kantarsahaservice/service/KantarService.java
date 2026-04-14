@@ -8,4 +8,6 @@ public interface KantarService {
     boolean check(KantarTestRequest body);
 
     List<String> comList();
+
+    int kantarOku();
 }

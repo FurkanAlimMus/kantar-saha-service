@@ -3,6 +3,7 @@ import org.springframework.stereotype.Service;
 import com.fazecast.jSerialComm.SerialPort;
 import tr.gov.tmo.erp.kantarsahaservice.business.FileProses;
 import tr.gov.tmo.erp.kantarsahaservice.model.KantarTestRequest;
+import tr.gov.tmo.erp.kantarsahaservice.model.PortScanResult;
 
 import java.util.Arrays;
 
@@ -14,11 +15,16 @@ public class KantarServiceImpl implements KantarService {
 
 
 
+
     @Override
     public boolean check(KantarTestRequest body) {
         return FileProses.writeKantarInfo(body);
-//       return PortScanner.scannerPort(body.port(), body.kilo());
+    }
 
+    @Override
+    public int kantarOku() {
+
+        return 0;
     }
 
     @Override
@@ -28,5 +34,7 @@ public class KantarServiceImpl implements KantarService {
 
 
     }
+
+
 
 }
