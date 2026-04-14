@@ -1,5 +1,8 @@
 package tr.gov.tmo.erp.kantarsahaservice.business;
 
+import tr.gov.tmo.erp.kantarsahaservice.model.KantarConfig;
+import tr.gov.tmo.erp.kantarsahaservice.model.KantarPattern;
+
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,21 +13,69 @@ import java.util.stream.Collectors;
 
 public class BinaryDataConverter {
 
-    public static int convert(byte[] data) {
+    public static KantarConfig convert(byte[] data) {
 
-        List<Integer> gelenTartih = new ArrayList<>();
+//        List<Integer> gelenTarti = new ArrayList<>();
         String text = new String(data, StandardCharsets.US_ASCII);
 
         // Durukan, Esit, Şahin, Sentez, Taralsa bu formata girer
-        Pattern genericAtPattern = Pattern.compile("[@ABJ]\\s+([0-9][\\d]*)\\r?");
-        Matcher m1 = genericAtPattern.matcher(text);
-        while (m1.find()) gelenTartih.add(Integer.parseInt(m1.group(1).trim()));
+        List<Integer> genel = new ArrayList<>();
+        Matcher m1 = KantarPattern.GENERIC_AT.getPattern().matcher(text);
+        while (m1.find()) genel.add(Integer.parseInt(m1.group(1).trim()));
+        if (!genel.isEmpty()) return result(genel,KantarPattern.GENERIC_AT.getPattern());
 
-        /*
+        // Tunaylar
+        List<Integer> tunaylarGenel = new ArrayList<>();
+        Matcher m3 = KantarPattern.TUNAYLAR_STD.getPattern().matcher(text);
+        while (m3.find()) tunaylarGenel.add(Integer.parseInt(m1.group(1).trim()));
+        if (!tunaylarGenel.isEmpty()) return result(tunaylarGenel,KantarPattern.TUNAYLAR_STD.getPattern());
+
+        //  Weiolo
+        List<Integer> philipsGenel = new ArrayList<>();
+        Matcher m2 = KantarPattern.WEIOLO.getPattern().matcher(text);
+        while (m2.find()) philipsGenel.add(Integer.parseInt(m1.group(1).trim()));
+        if (!philipsGenel.isEmpty()) return result(philipsGenel,KantarPattern.WEIOLO.getPattern());
+
+        // Tunaylar Genişletilmiş Format için Regex
+        List<Integer> tunaylarExt = new ArrayList<>();
+        Matcher m4 = KantarPattern.TUNAYLAR_EXT.getPattern().matcher(text);
+        while (m4.find()) tunaylarExt.add(Integer.parseInt(m1.group(1).trim()));
+        if (!tunaylarExt.isEmpty()) return result(tunaylarExt,KantarPattern.TUNAYLAR_EXT.getPattern());
+
+        //PHILIPS
+        List<Integer> philips = new ArrayList<>();
+        Matcher m5 = KantarPattern.PHILIPS.getPattern().matcher(text);
+        while (m5.find()) philips.add(Integer.parseInt(m1.group(1).trim()));
+        if (!philips.isEmpty()) return result(philips,KantarPattern.PHILIPS.getPattern());
+
+        return null;
+    }
+
+
+    private static KantarConfig result(List<Integer> gelenTartiList , Pattern kantarPattern) {
+        Integer covertTartim = gelenTartiList.stream()
+                .collect(Collectors.groupingBy(i -> i, Collectors.counting()))
+                .entrySet()
+                .stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(-1);
+
+        return new KantarConfig(kantarPattern, covertTartim);
+    }
+
+
+
+}
+
+
+
+
+/*      *//*
         * Bak: Paketin başında STX ve özel Tunaylar işareti var mı?
         Kes: Varsa, oradan itibaren 14 karakterlik bir blok kes.
         Ayıkla: Bu bloğu boşluklarından ayır, ortadaki rakamı al.
-        Onayla: Rakam mantıklıysa (sıfırdan büyükse) bunu adaylar listesine ekle.*/
+        Onayla: Rakam mantıklıysa (sıfırdan büyükse) bunu adaylar listesine ekle.*//*
 
         for (int i = 0; i < data.length - 15; i++) {
             if (data[i] == 0x02 && (data[i + 1] == 0x21 || data[i + 1] == 0x29)) {
@@ -38,14 +89,8 @@ public class BinaryDataConverter {
                 } catch (Exception ignored) {
                 }
             }
-        }
-
-        //  Weiolo
-        Matcher m2 = Pattern.compile("[SU][ST],GS,[+-]\\s*([\\d]+)kg").matcher(text);
-        while (m2.find()) gelenTartih.add(Integer.parseInt(m1.group(1).trim()));
-
-        // Tunaylar
-        for (int i = 0; i < data.length - 1; i++) {
+        }*/
+  /*      for (int i = 0; i < data.length - 1; i++) {
             if (data[i] == 0x02) {
                 int end = indexOf(data, (byte) 0x03, i + 1);
 
@@ -67,23 +112,4 @@ public class BinaryDataConverter {
                 }
                 i = end;
             }
-        }
-
-        //Hangi değerden fazla tartım bilgisi geldi ise onu yazıyoruz
-        return gelenTartih.stream()
-                .collect(Collectors.groupingBy(i -> i, Collectors.counting()))
-                .entrySet()
-                .stream()
-                .max(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey)
-                .orElse(-1);
-    }
-
-    private static int indexOf(byte[] arr, byte val, int from) {
-        for (int i = from; i < arr.length; i++) {
-            if (arr[i] == val) return i;
-        }
-        return -1;
-    }
-
-}
+        }*/

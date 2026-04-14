@@ -1,17 +1,19 @@
 package tr.gov.tmo.erp.kantarsahaservice.business;
 
 import com.fazecast.jSerialComm.SerialPort;
+import tr.gov.tmo.erp.kantarsahaservice.model.KantarConfig;
 import tr.gov.tmo.erp.kantarsahaservice.model.PortScanResult;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class PortScanner {
     private static final int READ_TIMEOUT_MS = 2000;
     private static final int MIN_DATA_LENGTH = 3;
     private static final int FRAME_IDLE_TIMEOUT_MS = 500;
-    private static final int[] BAUD_RATES = { 9600,1200, 4800};
+    private static final int[] BAUD_RATES = { 1200,9600, 4800};
     private static final byte[][] COMMANDS = {{(byte) 0xFF, 0x30, 0x0D}, {0x02, 0x01, 0x44, 0x4e, 0x47, 0x0d},};
     private static final int PARITY = SerialPort.NO_PARITY;
     private static final int STOP_BIT = SerialPort.ONE_STOP_BIT;
@@ -62,15 +64,16 @@ public class PortScanner {
                     byte[] data = readFrame(commPort);
 
                     if (data.length < MIN_DATA_LENGTH) continue;
-                    System.out.println(Arrays.toString(data));
-                    System.out.println(new String(data));
-                    int convert = BinaryDataConverter.convert(data);
-                    PortScanResult x = new PortScanResult(baudRate, command, DATA_BIT, STOP_BIT, PARITY, FLOW_CONTROL);
-                    System.out.println(x);
+
+                    KantarConfig result = BinaryDataConverter.convert(data);
+
+                    int convert = Objects.requireNonNull(result).kilo();
+
+
 
                     if (convert == kilo) {
-                        return new PortScanResult(baudRate, command, DATA_BIT, STOP_BIT, PARITY, FLOW_CONTROL);
-                        //tüm config geri döenecek
+                        return new PortScanResult(baudRate, command, DATA_BIT, STOP_BIT, PARITY, FLOW_CONTROL,result.kantarPattern());
+
                     }
 
                 } catch (Exception e) {
