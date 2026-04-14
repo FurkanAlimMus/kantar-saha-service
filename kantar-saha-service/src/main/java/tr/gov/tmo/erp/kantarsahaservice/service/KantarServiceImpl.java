@@ -12,7 +12,6 @@ import tr.gov.tmo.erp.kantarsahaservice.model.PortScanResult;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static tr.gov.tmo.erp.kantarsahaservice.business.PortScanner.readFrame;
@@ -29,8 +28,6 @@ public class KantarServiceImpl implements KantarService {
     public int kantarOku() throws Exception {
 
         PortScanResult portScanResult = FileProses.readKantarInfo();
-
-
 
         SerialPort commPort = SerialPort.getCommPort(portScanResult.port());
         commPort.setComPortParameters(portScanResult.baudRate(), 8, SerialPort.ONE_STOP_BIT, SerialPort.NO_PARITY);

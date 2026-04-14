@@ -14,7 +14,7 @@ import java.util.Map;
 public class FileProses {
 
     private static final String dirPath = "C:\\bbys-kantar-info";
-    private static final String prefix = "kantar-info";
+    private static final String prefix = "kantar-info.txt";
 
     public static PortScanResult readKantarInfo() {
 
@@ -38,9 +38,9 @@ public class FileProses {
                         }
                     }
                     if (!infoData.isEmpty()) {
-                        PortScanner.lastResoultKantar = new PortScanResult(
+                        return PortScanner.lastResoultKantar = new PortScanResult(
                                 infoData.get(KantarInfoEnum.PORT.name()),
-                                Integer.getInteger(infoData.get(KantarInfoEnum.BAUND_RATE.name())),
+                               Integer.parseInt(infoData.get(KantarInfoEnum.BAUND_RATE.name())),
                                 infoData.get(KantarInfoEnum.COMMAND.name()).getBytes(StandardCharsets.UTF_8),
                                 infoData.get(KantarInfoEnum.PATTERN_MODEL.name())
                         );
@@ -55,10 +55,7 @@ public class FileProses {
 
 
         }
-
-
         return null;
-
     }
 
     public static boolean writeKantarInfo(KantarTestRequest body) {
@@ -112,7 +109,7 @@ public class FileProses {
         }
 
         String fileName = dirPath + File.separator
-                + prefix + ".txt";
+                + prefix;
 
         return new BufferedWriter(new FileWriter(fileName, false));
     }
