@@ -1,9 +1,8 @@
 package tr.gov.tmo.erp.kantarsahaservice.service;
 import org.springframework.stereotype.Service;
 import com.fazecast.jSerialComm.SerialPort;
-import tr.gov.tmo.erp.kantarsahaservice.business.PortScanner;
+import tr.gov.tmo.erp.kantarsahaservice.business.FileProses;
 import tr.gov.tmo.erp.kantarsahaservice.model.KantarTestRequest;
-import tr.gov.tmo.erp.kantarsahaservice.model.PortScanResult;
 
 import java.util.Arrays;
 
@@ -16,8 +15,9 @@ public class KantarServiceImpl implements KantarService {
 
 
     @Override
-    public PortScanResult check(KantarTestRequest body) {
-       return PortScanner.scannerPort(body.port(), body.kilo());
+    public boolean check(KantarTestRequest body) {
+        return FileProses.writeKantarInfo(body);
+//       return PortScanner.scannerPort(body.port(), body.kilo());
 
     }
 

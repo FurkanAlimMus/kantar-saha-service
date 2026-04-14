@@ -7,16 +7,15 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
-public class fileProses {
+public class FileProses {
 
     void  readKantarInfo(){
 
     }
 
     public static boolean writeKantarInfo(KantarTestRequest body) {
+
         try {
             PortScanResult result = PortScanner.scannerPort(body.port(), body.kilo());
 
@@ -50,7 +49,6 @@ public class fileProses {
 
                 writer.write("PATTERN    : " + result.pattern().pattern());
 
-
                 writer.flush();
             }
 
@@ -73,18 +71,17 @@ public class fileProses {
 
 
 
-
     static BufferedWriter createBufferedWriter(String dirPath, String prefix) throws IOException {
-        // Klasör yoksa oluştur
         File dir = new File(dirPath);
         if (!dir.exists()) {
             dir.mkdirs();
         }
 
+
         String fileName = dirPath + File.separator
                 + prefix +  ".txt";
 
-        return new BufferedWriter(new FileWriter(fileName, true));
+        return new BufferedWriter(new FileWriter(fileName, false));
     }
 
 }

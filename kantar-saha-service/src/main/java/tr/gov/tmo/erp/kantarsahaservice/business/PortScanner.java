@@ -13,7 +13,7 @@ public class PortScanner {
     private static final int READ_TIMEOUT_MS = 2000;
     private static final int MIN_DATA_LENGTH = 3;
     private static final int FRAME_IDLE_TIMEOUT_MS = 500;
-    private static final int[] BAUD_RATES = { 1200,9600, 4800};
+    private static final int[] BAUD_RATES = { 9600,1200, 4800};
     private static final byte[][] COMMANDS = {{(byte) 0xFF, 0x30, 0x0D}, {0x02, 0x01, 0x44, 0x4e, 0x47, 0x0d},};
     private static final int PARITY = SerialPort.NO_PARITY;
     private static final int STOP_BIT = SerialPort.ONE_STOP_BIT;

@@ -15,7 +15,6 @@ public class BinaryDataConverter {
 
     public static KantarConfig convert(byte[] data) {
 
-//        List<Integer> gelenTarti = new ArrayList<>();
         String text = new String(data, StandardCharsets.US_ASCII);
 
         // Durukan, Esit, Şahin, Sentez, Taralsa bu formata girer
@@ -27,14 +26,14 @@ public class BinaryDataConverter {
         // Tunaylar
         List<Integer> tunaylarGenel = new ArrayList<>();
         Matcher m3 = KantarPattern.TUNAYLAR_STD.getPattern().matcher(text);
-        while (m3.find()) tunaylarGenel.add(Integer.parseInt(m1.group(1).trim()));
+        while (m3.find()) tunaylarGenel.add(Integer.parseInt(m3.group(1).trim()));
         if (!tunaylarGenel.isEmpty()) return result(tunaylarGenel,KantarPattern.TUNAYLAR_STD.getPattern());
 
         //  Weiolo
-        List<Integer> philipsGenel = new ArrayList<>();
+        List<Integer> weilo = new ArrayList<>();
         Matcher m2 = KantarPattern.WEIOLO.getPattern().matcher(text);
-        while (m2.find()) philipsGenel.add(Integer.parseInt(m1.group(1).trim()));
-        if (!philipsGenel.isEmpty()) return result(philipsGenel,KantarPattern.WEIOLO.getPattern());
+        while (m2.find()) weilo.add(Integer.parseInt(m2.group(1).trim()));
+        if (!weilo.isEmpty()) return result(weilo,KantarPattern.WEIOLO.getPattern());
 
         // Tunaylar Genişletilmiş Format için Regex
         List<Integer> tunaylarExt = new ArrayList<>();
@@ -45,7 +44,7 @@ public class BinaryDataConverter {
         //PHILIPS
         List<Integer> philips = new ArrayList<>();
         Matcher m5 = KantarPattern.PHILIPS.getPattern().matcher(text);
-        while (m5.find()) philips.add(Integer.parseInt(m1.group(1).trim()));
+        while (m5.find()) philips.add(Integer.parseInt(m5.group(1).trim()));
         if (!philips.isEmpty()) return result(philips,KantarPattern.PHILIPS.getPattern());
 
         return null;

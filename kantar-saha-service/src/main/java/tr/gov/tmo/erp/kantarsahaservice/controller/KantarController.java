@@ -19,9 +19,9 @@ public class KantarController {
     }
 
     @PostMapping
-    public PortScanResult test(@RequestBody KantarTestRequest body) {
-        PortScanResult check = kantarService.check(body);
-        return check;
+    public Boolean test(@RequestBody KantarTestRequest body) {
+        return kantarService.check(body);
+
     }
 
     @GetMapping("ports")
