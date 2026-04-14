@@ -36,7 +36,7 @@ public class BinaryDataConverter {
 
 
 
-    private static KantarConfig getKantarConfig(String parametre,KantarPattern patternModel){
+    public static KantarConfig getKantarConfig(String parametre,KantarPattern patternModel){
         List<Integer> genel = new ArrayList<>();
         Matcher m1 = patternModel.getPattern().matcher(parametre);
         while (m1.find()) genel.add(Integer.parseInt(m1.group(1).trim()));
@@ -44,7 +44,7 @@ public class BinaryDataConverter {
         return null;
     }
 
-    private static KantarConfig result(List<Integer> gelenTartiList , String patternModel ) {
+    public static KantarConfig result(List<Integer> gelenTartiList , String patternModel ) {
         Integer covertTartim = gelenTartiList.stream()
                 .collect(Collectors.groupingBy(i -> i, Collectors.counting()))
                 .entrySet()

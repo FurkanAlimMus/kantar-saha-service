@@ -21,7 +21,7 @@ public class PortScanner {
 
     public static PortScanResult lastResoultKantar;
 
-    static byte[] readFrame(SerialPort port) throws Exception {
+    public static byte[] readFrame(SerialPort port) throws Exception {
 
         InputStream is = port.getInputStream();
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -48,8 +48,6 @@ public class PortScanner {
 
     public static PortScanResult scannerPort(String port, Integer kilo) {
 
-
-
         for (int baudRate : BAUD_RATES) {
             for (byte[] command : COMMANDS) {
 
@@ -71,7 +69,6 @@ public class PortScanner {
                     KantarConfig result = BinaryDataConverter.convert(data);
 
                     int convert = Objects.requireNonNull(result).kilo();
-
 
 
                     if (convert == kilo) {

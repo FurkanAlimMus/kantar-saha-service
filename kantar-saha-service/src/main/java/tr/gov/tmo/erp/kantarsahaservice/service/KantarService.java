@@ -9,5 +9,5 @@ public interface KantarService {
 
     List<String> comList();
 
-    int kantarOku();
+    int kantarOku() throws Exception;
 }

@@ -2,7 +2,6 @@ package tr.gov.tmo.erp.kantarsahaservice.controller;
 
 import org.springframework.web.bind.annotation.*;
 import tr.gov.tmo.erp.kantarsahaservice.model.KantarTestRequest;
-import tr.gov.tmo.erp.kantarsahaservice.model.PortScanResult;
 import tr.gov.tmo.erp.kantarsahaservice.service.KantarService;
 
 import java.util.List;
@@ -23,7 +22,8 @@ public class KantarController {
         return kantarService.check(body);
     }
 
-    public int kantarOku(){
+    @GetMapping("kilo")
+    public int kantarOku() throws Exception {
         return kantarService.kantarOku();
     }
 
